@@ -1,7 +1,10 @@
 import { useUserStore } from '@/store/user.store';
 import { theme } from '@/theme';
-import { Entypo, Feather } from '@expo/vector-icons';
-import { Redirect, Tabs } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Link, Redirect, Tabs } from 'expo-router';
+import { Pressable, StyleSheet } from 'react-native';
 
 export default function Layout() {
   const { hasFinishedOnboarding } = useUserStore();
@@ -17,7 +20,18 @@ export default function Layout() {
           title: 'Home',
           tabBarShowLabel: false,
           tabBarIcon: ({ size, color }) => (
-            <Entypo name="leaf" size={size} color={color} />
+            <FontAwesome name="leaf" size={size} color={color} />
+          ),
+          headerRight: () => (
+            <Link href={'/new'} style={styles.headerButton} asChild>
+              <Pressable hitSlop={20}>
+                <AntDesign
+                  name="plus-circle"
+                  size={24}
+                  color={theme.colorGreen}
+                />
+              </Pressable>
+            </Link>
           ),
         }}
       />
@@ -34,3 +48,9 @@ export default function Layout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  headerButton: {
+    marginRight: 18,
+  },
+});
