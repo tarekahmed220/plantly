@@ -1,10 +1,8 @@
 import { useUserStore } from '@/store/user.store';
 import { theme } from '@/theme';
 import { Feather } from '@expo/vector-icons';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Redirect, Tabs } from 'expo-router';
-import { Pressable, StyleSheet } from 'react-native';
+import { Redirect, Tabs } from 'expo-router';
 
 export default function Layout() {
   const { hasFinishedOnboarding } = useUserStore();
@@ -15,23 +13,13 @@ export default function Layout() {
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: theme.colorGreen }}>
       <Tabs.Screen
-        name="index"
+        name="(home)"
         options={{
           title: 'Home',
           tabBarShowLabel: false,
+          headerShown: false,
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="leaf" size={size} color={color} />
-          ),
-          headerRight: () => (
-            <Link href={'/new'} style={styles.headerButton} asChild>
-              <Pressable hitSlop={20}>
-                <AntDesign
-                  name="plus-circle"
-                  size={24}
-                  color={theme.colorGreen}
-                />
-              </Pressable>
-            </Link>
           ),
         }}
       />
@@ -48,9 +36,3 @@ export default function Layout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  headerButton: {
-    marginRight: 18,
-  },
-});

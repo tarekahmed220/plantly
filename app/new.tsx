@@ -2,20 +2,22 @@ import { PlantlyButton } from '@/components/PlantlyButton';
 import { PlantlyImage } from '@/components/PlantlyImage';
 import { usePlantStore } from '@/store/plantsStore';
 import { theme } from '@/theme';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   Alert,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  View,
+  TouchableOpacity,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function NewScreen() {
   const [name, setName] = useState<string>();
   const [days, setDays] = useState<string>();
+  const [image, setImage] = useState<string>();
   const addPlant = usePlantStore((state) => state.addPlant);
   const router = useRouter();
   const handleSubmit = () => {
@@ -36,19 +38,36 @@ export default function NewScreen() {
         'Watering frequency must be a be a number',
       );
     }
-    addPlant(name, Number(days));
+
+    addPlant(name, Number(days), image);
     router.navigate('/');
+  };
+  const handleImagePress = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets?.[0].uri);
+    }
   };
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={styles.centered}>
-        <PlantlyImage />
-      </View>
+      <TouchableOpacity
+        style={styles.centered}
+        activeOpacity={0.7}
+        onPress={handleImagePress}
+      >
+        <PlantlyImage uri={image} />
+      </TouchableOpacity>
       <Text style={styles.label}>Name</Text>
       <TextInput
         value={name}
@@ -66,7 +85,7 @@ export default function NewScreen() {
         keyboardType="number-pad"
       />
       <PlantlyButton title="Add plant" onPress={handleSubmit} />
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -94,5 +113,6 @@ const styles = StyleSheet.create({
   },
   centered: {
     alignItems: 'center',
+    marginBottom: 24,
   },
 });
